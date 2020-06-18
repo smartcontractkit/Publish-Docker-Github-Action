@@ -31,8 +31,7 @@ teardown() {
 
   expectStdOutContains "::set-output name=tag::latest"
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:latest .
 /usr/local/bin/docker push my/repository:latest
 /usr/local/bin/docker inspect --format={{index .RepoDigests 0}} my/repository:latest
 /usr/local/bin/docker logout"
@@ -67,8 +66,7 @@ teardown() {
 
   expectStdOutContains "::set-output name=tag::latest"
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:latest .
 /usr/local/bin/docker push my/repository:latest
 /usr/local/bin/docker inspect --format={{index .RepoDigests 0}} my/repository:latest
 /usr/local/bin/docker logout"
@@ -106,8 +104,7 @@ teardown() {
 
   expectStdOutContains "::set-output name=tag::1.2.34"
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:1.2.34 -t my/repository:1.2 -t my/repository:1 .
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:1.2.34 -t my/repository:1.2 -t my/repository:1 .
 /usr/local/bin/docker push my/repository:1.2.34
 /usr/local/bin/docker push my/repository:1.2
 /usr/local/bin/docker push my/repository:1
@@ -128,8 +125,7 @@ teardown() {
 
     expectStdOutContains "::set-output name=tag::1.1.1-${SUFFIX}"
 
-    expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:1.1.1-${SUFFIX} -t my/repository:1.1-${SUFFIX} -t my/repository:1-${SUFFIX} .
+    expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:1.1.1-${SUFFIX} -t my/repository:1.1-${SUFFIX} -t my/repository:1-${SUFFIX} .
 /usr/local/bin/docker push my/repository:1.1.1-${SUFFIX}
 /usr/local/bin/docker push my/repository:1.1-${SUFFIX}
 /usr/local/bin/docker push my/repository:1-${SUFFIX}
@@ -146,8 +142,7 @@ teardown() {
 
   expectStdOutContains "::set-output name=tag::1.2.34"
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:1.2.34 -t my/repository:1.2 -t my/repository:1 .
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:1.2.34 -t my/repository:1.2 -t my/repository:1 .
 /usr/local/bin/docker push my/repository:1.2.34
 /usr/local/bin/docker push my/repository:1.2
 /usr/local/bin/docker push my/repository:1
@@ -241,8 +236,7 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker pull my/repository:latest
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker pull my/repository:latest
 /usr/bin/date +%Y%m%d%H%M%S
 /usr/local/bin/docker build --cache-from my/repository:latest -t my/repository:latest -t my/repository:19700101010112169e .
 /usr/local/bin/docker push my/repository:latest
@@ -528,8 +522,7 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:A -t my/repository:B -t my/repository:C .
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:A -t my/repository:B -t my/repository:C .
 /usr/local/bin/docker push my/repository:A
 /usr/local/bin/docker push my/repository:B
 /usr/local/bin/docker push my/repository:C
@@ -543,8 +536,7 @@ teardown() {
 
   run /entrypoint.sh
 
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:A .
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin /usr/local/bin/docker build -t my/repository:A .
 /usr/local/bin/docker push my/repository:A
 /usr/local/bin/docker inspect --format={{index .RepoDigests 0}} my/repository:A
 /usr/local/bin/docker logout"

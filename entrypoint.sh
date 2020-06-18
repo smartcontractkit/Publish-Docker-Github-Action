@@ -32,7 +32,7 @@ main() {
     changeWorkingDirectory
   fi
 
-  echo "${INPUT_PASSWORD}" | docker login -u ${INPUT_USERNAME} --password-stdin ${INPUT_REGISTRY}
+  echo "${INPUT_PASSWORD}" | docker login -u "${INPUT_USERNAME}" --password-stdin "${INPUT_REGISTRY}"
 
   FIRST_TAG=$(echo "${TAGS}" | cut -d ' ' -f1)
   DOCKERNAME="${INPUT_NAME}:${FIRST_TAG}"
@@ -58,7 +58,7 @@ main() {
   push
 
   echo "::set-output name=tag::${FIRST_TAG}"
-  DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${DOCKERNAME})
+  DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "${DOCKERNAME}")
   echo "::set-output name=digest::${DIGEST}"
 
   docker logout
@@ -72,19 +72,20 @@ sanitize() {
 }
 
 registryToLower(){
- INPUT_REGISTRY=$(echo "${INPUT_REGISTRY}" | tr '[A-Z]' '[a-z]')
+ INPUT_REGISTRY=$(echo "${INPUT_REGISTRY}" | tr '[:upper:]' '[:lower:]')
 }
 
 nameToLower(){
-  INPUT_NAME=$(echo "${INPUT_NAME}" | tr '[A-Z]' '[a-z]')
+  INPUT_NAME=$(echo "${INPUT_NAME}" | tr '[:upper:]' '[:lower:]')
 }
 
 isPartOfTheName() {
-  [ $(echo "${INPUT_NAME}" | sed -e "s/${1}//g") != "${INPUT_NAME}" ]
+  [ "$(echo "${INPUT_NAME}" | sed -e "s/${1}//g")" != "${INPUT_NAME}" ]
 }
 
 translateDockerTag() {
-  local BRANCH=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+  local BRANCH
+  BRANCH=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
   if hasCustomTag; then
     TAGS=$(echo "${INPUT_NAME}" | cut -d':' -f2)
     INPUT_NAME=$(echo "${INPUT_NAME}" | cut -d':' -f1)
@@ -104,7 +105,7 @@ translateDockerTag() {
 }
 
 hasCustomTag() {
-  [ $(echo "${INPUT_NAME}" | sed -e "s/://g") != "${INPUT_NAME}" ]
+  [ "$(echo "${INPUT_NAME}" | sed -e "s/://g")" != "${INPUT_NAME}" ]
 }
 
 isOnMaster() {
@@ -112,11 +113,11 @@ isOnMaster() {
 }
 
 isGitTag() {
-  [ $(echo "${GITHUB_REF}" | sed -e "s/refs\/tags\///g") != "${GITHUB_REF}" ]
+  [ "$(echo "${GITHUB_REF}" | sed -e "s/refs\/tags\///g")" != "${GITHUB_REF}" ]
 }
 
 isPullRequest() {
-  [ $(echo "${GITHUB_REF}" | sed -e "s/refs\/pull\///g") != "${GITHUB_REF}" ]
+  [ "$(echo "${GITHUB_REF}" | sed -e "s/refs\/pull\///g")" != "${GITHUB_REF}" ]
 }
 
 changeWorkingDirectory() {
@@ -141,11 +142,11 @@ useBuildCache() {
 }
 
 uses() {
-  [ ! -z "${1}" ]
+  [ -n "${1}" ]
 }
 
 usesBoolean() {
-  [ ! -z "${1}" ] && [ "${1}" = "true" ]
+  [ -n "${1}" ] && [ "${1}" = "true" ]
 }
 
 isSemver() {
@@ -153,9 +154,12 @@ isSemver() {
 }
 
 useSnapshot() {
-  local TIMESTAMP=`date +%Y%m%d%H%M%S`
-  local SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-6)
-  local SNAPSHOT_TAG="${TIMESTAMP}${SHORT_SHA}"
+  local TIMESTAMP
+  TIMESTAMP=$(date "+%Y%m%d%H%M%S")
+  local SHORT_SHA
+  SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-6)
+  local SNAPSHOT_TAG
+  SNAPSHOT_TAG="${TIMESTAMP}${SHORT_SHA}"
   TAGS="${TAGS} ${SNAPSHOT_TAG}"
   echo "::set-output name=snapshot-tag::${SNAPSHOT_TAG}"
 }
@@ -165,7 +169,7 @@ push() {
   for TAG in ${TAGS}; do
     BUILD_TAGS="${BUILD_TAGS}-t ${INPUT_NAME}:${TAG} "
   done
-  docker build ${INPUT_BUILDOPTIONS} ${BUILDPARAMS} ${BUILD_TAGS} ${CONTEXT}
+  docker build ${INPUT_BUILDOPTIONS} ${BUILDPARAMS} ${BUILD_TAGS} "${CONTEXT}"
 
   for TAG in ${TAGS}; do
     docker push "${INPUT_NAME}:${TAG}"
