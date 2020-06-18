@@ -184,8 +184,8 @@ teardown() {
 
   expectStdOutContains "::set-output name=tag::v1.2.34"
 
-  expectMockCalled "/usr/local/bin/docker build -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest"
+  expectMockCalled "/usr/local/bin/docker build -t my/repository:v1.2.34 .
+/usr/local/bin/docker push my/repository:v1.2.34"
 }
 
 @test "it pushes specific Dockerfile to latest" {

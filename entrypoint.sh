@@ -9,7 +9,7 @@ main() {
     echo "::add-mask::${INPUT_PASSWORD}"
     set -x
   fi
-  
+
   sanitize "${INPUT_NAME}" "name"
   sanitize "${INPUT_USERNAME}" "username"
   sanitize "${INPUT_PASSWORD}" "password"
@@ -24,7 +24,7 @@ main() {
 
   if uses "${INPUT_TAGS}"; then
     TAGS=$(echo "${INPUT_TAGS}" | sed "s/,/ /g")
-  else 
+  else
     translateDockerTag
   fi
 
@@ -87,6 +87,10 @@ translateDockerTag() {
   local REF
   REF=$(echo "${GITHUB_REF}" | sed -e "s/refs\/\w\+\///g")
 
+  if [ -n "${INPUT_TAG_SUBST}" ]; then
+    REF=$(echo "${REF}"| sed -re "s${INPUT_TAG_SUBST}")
+  fi;
+
   local BRANCH
   BRANCH=$(echo "${REF}" | sed -e "s/\//-/g")
 
@@ -95,13 +99,13 @@ translateDockerTag() {
     INPUT_NAME=$(echo "${INPUT_NAME}" | cut -d':' -f1)
   elif isOnMaster; then
     TAGS="latest"
-  elif isGitTag && usesBoolean "${INPUT_TAG_SEMVER}" && isSemver "${GITHUB_REF}"; then
+  elif isGitTag && usesBoolean "${INPUT_TAG_SEMVER}" && isSemver "${REF}"; then
     TAGS=$(echo "${REF}" | sed -E "s/v?([0-9]+)\.([0-9+])\.([0-9]+)(-[a-zA-Z]+(\.[0-9]+)?)?/\1.\2.\3\4 \1.\2\4 \1\4/g")
   elif isGitTag && usesBoolean "${INPUT_TAG_NAMES}"; then
     TAGS="${REF}"
   elif isGitTag; then
     TAGS="latest"
-  elif isPullRequest; then
+  elif isPullRequest "${REF}"; then
     TAGS="${GITHUB_SHA}"
   else
     TAGS="${BRANCH}"
@@ -154,7 +158,7 @@ usesBoolean() {
 }
 
 isSemver() {
-  echo "${1}" | grep -Eq '^refs/tags/v?([0-9]+)\.([0-9+])\.([0-9]+)(-[a-zA-Z]+(\.[0-9]+)?)?$'
+  echo "${1}" | grep -Eq '^v?([0-9]+)\.([0-9+])\.([0-9]+)(-[a-zA-Z]+(\.[0-9]+)?)?$'
 }
 
 useSnapshot() {
