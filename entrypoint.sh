@@ -84,17 +84,21 @@ isPartOfTheName() {
 }
 
 translateDockerTag() {
+  local REF
+  REF=$(echo "${GITHUB_REF}" | sed -e "s/refs\/\w\+\///g")
+
   local BRANCH
-  BRANCH=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+  BRANCH=$(echo "${REF}" | sed -e "s/\//-/g")
+
   if hasCustomTag; then
     TAGS=$(echo "${INPUT_NAME}" | cut -d':' -f2)
     INPUT_NAME=$(echo "${INPUT_NAME}" | cut -d':' -f1)
   elif isOnMaster; then
     TAGS="latest"
   elif isGitTag && usesBoolean "${INPUT_TAG_SEMVER}" && isSemver "${GITHUB_REF}"; then
-    TAGS=$(echo "${GITHUB_REF}" | sed -e "s/refs\/tags\///g" | sed -E "s/v?([0-9]+)\.([0-9+])\.([0-9]+)(-[a-zA-Z]+(\.[0-9]+)?)?/\1.\2.\3\4 \1.\2\4 \1\4/g")
+    TAGS=$(echo "${REF}" | sed -E "s/v?([0-9]+)\.([0-9+])\.([0-9]+)(-[a-zA-Z]+(\.[0-9]+)?)?/\1.\2.\3\4 \1.\2\4 \1\4/g")
   elif isGitTag && usesBoolean "${INPUT_TAG_NAMES}"; then
-    TAGS=$(echo "${GITHUB_REF}" | sed -e "s/refs\/tags\///g")
+    TAGS="${REF}"
   elif isGitTag; then
     TAGS="latest"
   elif isPullRequest; then
