@@ -44,6 +44,9 @@ inputs:
   tag_semver:
     description: 'Push semver docker tags. e.g. image:1.2.3, image:1.2, image:1'
     required: false
+  tag_subst:
+    description: 'Specify a regex to use to modify the tag, e.g: /.*-v(.*)/\1/'
+    required: false
 outputs:
   tag:
     description: 'Is the tag, which was pushed'

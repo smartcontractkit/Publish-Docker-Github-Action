@@ -15,6 +15,7 @@ setup(){
 
 teardown() {
   unset INPUT_TAG_NAMES
+  unset INPUT_TAG_SUBST
   unset INPUT_SNAPSHOT
   unset INPUT_DOCKERFILE
   unset INPUT_REGISTRY
@@ -169,6 +170,19 @@ teardown() {
   run /entrypoint.sh
 
   expectStdOutContains "::set-output name=tag::latest"
+
+  expectMockCalled "/usr/local/bin/docker build -t my/repository:latest .
+/usr/local/bin/docker push my/repository:latest"
+}
+
+@test "with tag subst set transforms ref to version" {
+  export GITHUB_REF='refs/tags/publisher-v1.2.34'
+  export INPUT_TAG_NAMES="true"
+  export INPUT_TAG_SUBST="/publisher-(v.+)$/\1/"
+
+  run /entrypoint.sh
+
+  expectStdOutContains "::set-output name=tag::v1.2.34"
 
   expectMockCalled "/usr/local/bin/docker build -t my/repository:latest .
 /usr/local/bin/docker push my/repository:latest"
